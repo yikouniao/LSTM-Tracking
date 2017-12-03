@@ -1,1 +1,3 @@
 # LSTM-Tracking
+*.mat
+*/*.mat
