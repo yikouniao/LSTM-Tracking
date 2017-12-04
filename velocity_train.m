@@ -5,7 +5,8 @@ foldername = ['MOT17-02-FRCNN'; 'MOT17-04-FRCNN'; 'MOT17-05-FRCNN';
 resolution = [[1920, 1080]; [1920, 1080]; [640, 480]; [1920, 1080];...
     [1920, 1080]; [1920, 1080]; [1920, 1080]];
 fps = [30; 30; 14; 30; 30; 30; 25];
-factor = 6; % keep the calculated velocities not too small
+split_factor = 0.7;
+scale_factor = 6; % keeps the calculated velocities not too small
 
 v_x_train = [];
 v_y_train = [];
@@ -17,18 +18,18 @@ for i = 1:seqnum
     gt_fname = ['../train/' foldername(i, :) '/gt/gt.txt'];
     dets = load(gt_fname);
 
-    % Only use valid pedestrian data to train
+    % uses valid pedestrian data only to train
     dets = dets(dets(:, 7)==1 & dets(:, 8)==1, :);
 
     % center coordinates
     c = [dets(:, 1:2) dets(:, 3) + dets(:, 5) / 2 ...
         dets(:, 4) + dets(:, 6) / 2];
 
-    % scale the coordinates into [0, 1]
-    c(:, 3) = c(:, 3) * factor / resolution(i, 1);
-    c(:, 4) = c(:, 4) * factor / resolution(i, 2);
+    % scales the coordinates into [0, 1]
+    c(:, 3) = c(:, 3) * scale_factor / resolution(i, 1);
+    c(:, 4) = c(:, 4) * scale_factor / resolution(i, 2);
 
-    % form the samples
+    % forms the samples
     max_id = max(c(:, 2));
     idv_x = zeros(1, 6, 2);
     idv_y = zeros(1, 2);
@@ -43,7 +44,7 @@ for i = 1:seqnum
             idv_x_tmp = [idv_x_tmp; idc(k + 1, 3:4) - idc(k, 3:4)];
         end
         idv_y_tmp = idc(8, 3:4) - idc(7, 3:4);
-        idv_x(sample_cnt, :, :) = idv_x_tmp(:, :);
+        idv_x(sample_cnt, :, :) = idv_x_tmp;
         idv_y(sample_cnt, :) = idv_y_tmp;
         sample_cnt = sample_cnt + 1;
         for k = 1:size(idc(:, 1)) - 8
@@ -55,11 +56,11 @@ for i = 1:seqnum
         end
     end
 
-    % save the matrixes
+    % saves the matrixes
     save(['../train/' foldername(i, :) '/v/v_x.mat'], 'idv_x');
     save(['../train/' foldername(i, :) '/v/v_y.mat'], 'idv_y');
 
-    split = fix(size(idv_y, 1) * 0.7);
+    split = fix(size(idv_y, 1) * split_factor);
     idv_x_train = idv_x(1:split, :, :);
     idv_y_train = idv_y(1:split, :);
     idv_x_test = idv_x(split + 1:size(idv_y, 1), :, :);
