@@ -25,7 +25,7 @@ for i = 1:seqnum
 
     % forms the samples
     max_id = max(dets(:, 2));
-    idp_x = zeros(1, 6);
+    idp_x = zeros(1, 6, 1);
     idp_y = zeros(1, 1);
     sample_cnt = 1;
     for j = 1:max_id % for each id
@@ -33,19 +33,19 @@ for i = 1:seqnum
             continue;
         end
         idc = dets(dets(:, 2)==j, :);
-        idv_p_tmp = [];
+        idp_x_tmp = [];
         for k = 1:6
-            idv_p_tmp = [idv_p_tmp, iou(idc(k, 3:6), idc(k + 1, 3:6))];
+            idp_x_tmp = [idp_x_tmp; iou(idc(k, 3:6), idc(k + 1, 3:6))];
         end
         idp_y_tmp = iou(idc(7, 3:6), idc(8, 3:6));
-        idp_x(sample_cnt, :) = idv_p_tmp;
-        idp_y(sample_cnt, 1) = idp_y_tmp;
+        idp_x(sample_cnt, :, :) = idp_x_tmp;
+        idp_y(sample_cnt, :) = idp_y_tmp;
         sample_cnt = sample_cnt + 1;
         for k = 1:size(idc(:, 1)) - 8
-            idv_p_tmp = [idv_p_tmp(2:6), idp_y_tmp];
-            idp_x(sample_cnt, :) = idv_p_tmp;
+            idp_x_tmp = [idp_x_tmp(2:6, :); idp_y_tmp];
+            idp_x(sample_cnt, :, :) = idp_x_tmp;
             idp_y_tmp = iou(idc(k + 7, 3:6), idc(k + 8, 3:6));
-            idp_y(sample_cnt, 1) = idp_y_tmp;
+            idp_y(sample_cnt, :) = idp_y_tmp;
             sample_cnt = sample_cnt + 1;
         end
     end
@@ -55,10 +55,10 @@ for i = 1:seqnum
     save(['../train/' foldername(i, :) '/p/p_y.mat'], 'idp_y');
 
     split = fix(size(idp_y, 1) * split_factor);
-    idp_x_train = idp_x(1:split, :);
-    idp_y_train = idp_y(1:split, 1);
-    idp_x_test = idp_x(split + 1:size(idp_y, 1), :);
-    idp_y_test = idp_y(split + 1:size(idp_y, 1), 1);
+    idp_x_train = idp_x(1:split, :, :);
+    idp_y_train = idp_y(1:split, :);
+    idp_x_test = idp_x(split + 1:size(idp_y, 1), :, :);
+    idp_y_test = idp_y(split + 1:size(idp_y, 1), :);
 
     save(['../train/' foldername(i, :) '/p/p_x_train.mat'], 'idp_x_train');
     save(['../train/' foldername(i, :) '/p/p_y_train.mat'], 'idp_y_train');

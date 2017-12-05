@@ -7,6 +7,7 @@ from keras.layers import Dense
 from keras import optimizers
 from keras import regularizers
 from scipy import io
+from numpy import reshape
 
 fpath = '../../train/p/%s.mat'
 learning_rate, learning_rate_decay = 1e-3, 2e-5
@@ -15,7 +16,9 @@ data_dim, timesteps, lstm_units = 1, 6, 12
 fit_epochs, fit_batch_size, fit_verbose = 50, 64, 2
 
 x_train = io.loadmat(fpath % 'p_x_train')['p_x_train']
+x_train = reshape(x_train, (len(x_train), timesteps, data_dim))
 x_test = io.loadmat(fpath % 'p_x_test')['p_x_test']
+x_test = reshape(x_test, (len(x_test), timesteps, data_dim))
 y_train = io.loadmat(fpath % 'p_y_train')['p_y_train']
 y_test = io.loadmat(fpath % 'p_y_test')['p_y_test']
 
