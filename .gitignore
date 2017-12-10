@@ -9,8 +9,11 @@
 *.jpg
 */*.jpg
 
-*.txt
-*/*.txt
+*.png
+*/*.png
 
 *.csv
 */*.csv
+
+*.mex*
+*/*.mex*

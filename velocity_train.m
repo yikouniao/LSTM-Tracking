@@ -1,5 +1,6 @@
 clear; clc;
 
+fpath = '../MOT17/train/';
 foldername = ['MOT17-02-FRCNN'; 'MOT17-04-FRCNN'; 'MOT17-05-FRCNN';
     'MOT17-09-FRCNN'; 'MOT17-10-FRCNN'; 'MOT17-11-FRCNN'; 'MOT17-13-FRCNN'];
 resolution = [[1920, 1080]; [1920, 1080]; [640, 480]; [1920, 1080];...
@@ -15,7 +16,7 @@ v_y_test = [];
 
 seqnum = size(foldername, 1);
 for i = 1:seqnum
-    gt_fname = ['../train/' foldername(i, :) '/gt/gt.txt'];
+    gt_fname = [fpath foldername(i, :) '/gt/gt.txt'];
     dets = load(gt_fname);
 
     % uses valid pedestrian data only to train
@@ -57,8 +58,8 @@ for i = 1:seqnum
     end
 
     % saves the matrixes
-    save(['../train/' foldername(i, :) '/v/v_x.mat'], 'idv_x');
-    save(['../train/' foldername(i, :) '/v/v_y.mat'], 'idv_y');
+    save([fpath foldername(i, :) '/v/v_x.mat'], 'idv_x');
+    save([fpath foldername(i, :) '/v/v_y.mat'], 'idv_y');
 
     split = fix(size(idv_y, 1) * split_factor);
     idv_x_train = idv_x(1:split, :, :);
@@ -66,10 +67,10 @@ for i = 1:seqnum
     idv_x_test = idv_x(split + 1:size(idv_y, 1), :, :);
     idv_y_test = idv_y(split + 1:size(idv_y, 1), :);
 
-    save(['../train/' foldername(i, :) '/v/v_x_train.mat'], 'idv_x_train');
-    save(['../train/' foldername(i, :) '/v/v_y_train.mat'], 'idv_y_train');
-    save(['../train/' foldername(i, :) '/v/v_x_test.mat'], 'idv_x_test');
-    save(['../train/' foldername(i, :) '/v/v_y_test.mat'], 'idv_y_test');
+    save([fpath foldername(i, :) '/v/v_x_train.mat'], 'idv_x_train');
+    save([fpath foldername(i, :) '/v/v_y_train.mat'], 'idv_y_train');
+    save([fpath foldername(i, :) '/v/v_x_test.mat'], 'idv_x_test');
+    save([fpath foldername(i, :) '/v/v_y_test.mat'], 'idv_y_test');
     
     v_x_train = [v_x_train; idv_x_train];
     v_y_train = [v_y_train; idv_y_train];
@@ -77,7 +78,7 @@ for i = 1:seqnum
     v_y_test = [v_y_test; idv_y_test];
 end
 
-save('../train/v/v_x_train.mat', 'v_x_train');
-save('../train/v/v_y_train.mat', 'v_y_train');
-save('../train/v/v_x_test.mat', 'v_x_test');
-save('../train/v/v_y_test.mat', 'v_y_test');
+save([fpath 'v/v_x_train.mat'], 'v_x_train');
+save([fpath 'v/v_y_train.mat'], 'v_y_train');
+save([fpath 'v/v_x_test.mat'], 'v_x_test');
+save([fpath 'v/v_y_test.mat'], 'v_y_test');

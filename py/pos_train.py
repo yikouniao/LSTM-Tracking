@@ -4,16 +4,18 @@
 from keras.models import Sequential
 from keras.layers import LSTM
 from keras.layers import Dense
+from keras.utils import plot_model
 from keras import optimizers
 from keras import regularizers
 from scipy import io
 from numpy import reshape
+from training_plot import training_plot
 
-fpath = '../../train/p/%s.mat'
-learning_rate, learning_rate_decay = 1e-3, 2e-5
+fpath = '../../MOT17/train/p/%s.mat'
+learning_rate, learning_rate_decay = 1e-3, 5e-6
 data_loss = 'mean_squared_error'
 data_dim, timesteps, lstm_units = 1, 6, 12
-fit_epochs, fit_batch_size, fit_verbose = 50, 64, 2
+fit_epochs, fit_batch_size, fit_verbose = 200, 64, 2
 
 x_train = io.loadmat(fpath % 'p_x_train')['p_x_train']
 x_train = reshape(x_train, (len(x_train), timesteps, data_dim))
@@ -31,7 +33,13 @@ model.add(Dense(data_dim))
 my_adam = optimizers.Adam(lr=learning_rate, beta_1=0.9, beta_2=0.999,
                           epsilon=1e-08, decay=learning_rate_decay)
 model.compile(optimizer=my_adam, loss=data_loss, metrics=['accuracy'])
-model.fit(x_train, y_train, epochs=fit_epochs, batch_size=fit_batch_size,
-          verbose=fit_verbose, validation_data=(x_test, y_test))
+history = model.fit(x_train, y_train, epochs=fit_epochs,
+                    batch_size=fit_batch_size, verbose=fit_verbose,
+                    validation_data=(x_test, y_test))
+
+training_plot(history)
+
+plot_model(model, to_file='p_model.png', show_shapes=True,
+           show_layer_names=True, rankdir='LR')
 
 model.save('p_model.h5')
