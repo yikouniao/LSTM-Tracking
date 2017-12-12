@@ -6,6 +6,9 @@
 *.mat
 */*.mat
 
+*.txt
+*/*.txt
+
 *.jpg
 */*.jpg
 
