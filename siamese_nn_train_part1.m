@@ -3,7 +3,6 @@ clear; clc;
 fpath = '../MOT17/train/';
 foldername = ['MOT17-02-FRCNN'; 'MOT17-04-FRCNN'; 'MOT17-05-FRCNN';
     'MOT17-09-FRCNN'; 'MOT17-10-FRCNN'; 'MOT17-11-FRCNN'; 'MOT17-13-FRCNN'];
-split_factor = 0.7;
 
 seqnum = size(foldername, 1);
 for i = 1:seqnum
@@ -55,13 +54,6 @@ for i = 1:seqnum
         end
     end
     
-    split = fix(pos_cnt * split_factor);
-    x1_pos_train = x1_pos(1:split, :);
-    x1_pos_test = x1_pos(split + 1:pos_cnt, :);
-    x2_pos_train = x2_pos(1:split, :);
-    x2_pos_test = x2_pos(split + 1:pos_cnt, :);
-    y_pos_train = y_pos(1:split, :);
-    y_pos_test = y_pos(split + 1:pos_cnt, :);
     
     % forms the negative samples within frames
     max_frame = max(dets(:, 1));
@@ -98,26 +90,27 @@ for i = 1:seqnum
         end
     end
     
-    split = fix(neg_cnt * split_factor);
-    x1_neg_train = x1_neg(1:split, :);
-    x1_neg_test = x1_neg(split + 1:neg_cnt, :);
-    x2_neg_train = x2_neg(1:split, :);
-    x2_neg_test = x2_neg(split + 1:neg_cnt, :);
-    y_neg_train = y_neg(1:split, :);
-    y_neg_test = y_neg(split + 1:neg_cnt, :);
+    % forms the samples vector
+    x1_bb = [x1_pos; x1_neg];
+    x2_bb = [x2_pos; x2_neg];
+    y_bb = [y_pos; y_neg];
     
-    % splice negative and postive samples
-    x1_train_bb = [x1_pos_train; x1_neg_train];
-    x1_test_bb = [x1_pos_test; x1_neg_test];
-    x2_train_bb = [x2_pos_train; x2_neg_train];
-    x2_test_bb = [x2_pos_test; x2_neg_test];
-    y_train_bb = [y_pos_train; y_neg_train];
-    y_test_bb = [y_pos_test; y_neg_test];
+    % splices negative and postive samples
+    r = randperm(size(x1_bb,1));
+    x1_bb = x1_bb(r,:);
+    x2_bb = x2_bb(r,:);
+    y_bb = y_bb(r,:);
     
-    save([fpath foldername(i, :) '/a/x1_train_bb.txt'], 'x1_train_bb');
-    save([fpath foldername(i, :) '/a/x1_test_bb.txt'], 'x1_test_bb');
-    save([fpath foldername(i, :) '/a/x2_train_bb.txt'], 'x2_train_bb');
-    save([fpath foldername(i, :) '/a/x2_test_bb.txt'], 'x2_test_bb');
-    save([fpath foldername(i, :) '/a/y_train_bb.txt'], 'y_train_bb');
-    save([fpath foldername(i, :) '/a/y_test_bb.txt'], 'y_test_bb');
+    total_cnt = pos_cnt + neg_cnt;
+    splice = fix(total_cnt / 100);
+    
+    for j = 1:100
+        x1_bb_splice = x1_bb(1+(j-1)*splice:j*splice, :);
+        x2_bb_splice = x2_bb(1+(j-1)*splice:j*splice, :);
+        y_bb_splice = y_bb(1+(j-1)*splice:j*splice, :);
+        save([fpath foldername(i, :) '/a/x1_bb_splice_' num2str(j) '.mat'], 'x1_bb_splice');
+        save([fpath foldername(i, :) '/a/x2_bb_splice_' num2str(j) '.mat'], 'x2_bb_splice');
+        save([fpath foldername(i, :) '/a/y_bb_splice_' num2str(j) '.mat'], 'y_bb_splice');
+    end
+
 end

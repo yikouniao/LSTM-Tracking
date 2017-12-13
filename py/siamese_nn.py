@@ -4,7 +4,7 @@ from keras.layers import Input, Flatten, concatenate, Dropout, Dense
 from keras.models import Model
 from keras import optimizers
 
-input_shape = (13, 42, 128)
+input_shape = (42, 13, 128)
 learning_rate, learning_rate_decay = 1e-3, 5e-6
 dropout_rate = 0.4
 
@@ -15,8 +15,8 @@ flatten_a = Flatten()(target_a)
 flatten_b = Flatten()(target_b)
 
 merged_vector = concatenate([flatten_a, flatten_b], axis=-1)
-dropouted = Dropout(rate=dropout_rate)(merged_vector)
-predictions = Dense(1, activation='sigmoid')(dropouted)
+#dropouted = Dropout(rate=dropout_rate)(merged_vector)
+predictions = Dense(1, activation='sigmoid')(merged_vector)
 
 model = Model(inputs=[target_a, target_b], outputs=predictions)
 
