@@ -38,7 +38,12 @@ clear; clc;
 %     draw_bb([fpath foldername(i, :) '/img1/000088.jpg'], dets(3), dets(4), dets(5), dets(6))
 % end
 
-a = zeros(20, 9);
-for i = 1:size(a, 1) - 8
-    i
-end
+% a = zeros(20, 9);
+% for i = 1:size(a, 1) - 8
+%     i
+% end
+
+%bb = [100,14,1256,447,38,99,1,1,1];
+bb = [192,89,532,241,58,167,1,1,0.42373];
+fname = '../MOT17/train/MOT17-04-FRCNN/img1/000192.jpg';
+draw_bb(fname, bb(3), bb(4), bb(5), bb(6));

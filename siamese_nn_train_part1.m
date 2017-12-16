@@ -102,9 +102,9 @@ for i = 1:seqnum
     y_bb = y_bb(r,:);
     
     total_cnt = pos_cnt + neg_cnt;
-    splice = fix(total_cnt / 100);
+    splice = fix(total_cnt / 1000);
     
-    for j = 1:100
+    for j = 1:1000
         x1_bb_splice = x1_bb(1+(j-1)*splice:j*splice, :);
         x2_bb_splice = x2_bb(1+(j-1)*splice:j*splice, :);
         y_bb_splice = y_bb(1+(j-1)*splice:j*splice, :);

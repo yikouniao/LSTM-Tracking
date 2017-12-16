@@ -18,17 +18,17 @@ bottom_vgg = load_model('bottom_vgg.h5')
 
 for folder in foldername: 
     for file in filename:
-        for i in range(100):
+        for i in range(1000):
             bb_fname = '%s%s/a/%s_%s.mat' % (in_fpath, folder, file,
                                              str(i + 1))
             bb = io.loadmat(bb_fname)[file]
             n = bb.shape[0]
             x_a = np.zeros((n, 42, 13, 128), dtype='float32')
-            for j in range(n // 31):
-                img_batch = np.zeros((31, height, width, channel),
+            for j in range(n // 32):
+                img_batch = np.zeros((32, height, width, channel),
                                      dtype='float32')
-                for k in range(31):
-                    row_num = j * 31 + k
+                for k in range(32):
+                    row_num = j * 32 + k
                     img_fname = '%s%s/img1/%s' % (in_fpath, folder,
                                                   num2fname(bb[row_num][0]))
                     img = misc.imread(img_fname)
@@ -39,7 +39,8 @@ for folder in foldername:
                     img = img.astype('float32')
                     img_batch[k] = img
 
-                x_a[j * 31:(j + 1) * 31 - 1] = bottom_vgg.predict(
+                np.save('img_batch.npy', img_batch)
+                x_a[j * 32:(j + 1) * 32] = bottom_vgg.predict(
                     x=img_batch, batch_size=32, verbose=0)
             
             out_fname = '%s%s/a/%s_%s.npy' % (out_fpath, folder, file,
