@@ -49,7 +49,21 @@
 # score = model.evaluate(x_test, y_test, verbose=0)
 # print(score)
 
-from bb_feature import get_v
-bb1 = [0, 0, 100, 100]
-bb2 = [50, 20, 100, 100]
-print(get_v(bb1, bb2))
+# from bb_feature import get_v
+# bb1 = [0, 0, 100, 100]
+# bb2 = [50, 20, 100, 100]
+# print(get_v(bb1, bb2))
+
+# a=(1,2,3,4)
+# b=(5,6,7,8)
+# for aa,bb in zip(a,b):
+#     print(aa+bb)
+
+def f(b, x):
+    return b+x
+
+a = [1,2,3,4,5]
+b = 10
+c = max(a, key=lambda x: f(b, x))
+from bb_feature import *
+ds_score(b)

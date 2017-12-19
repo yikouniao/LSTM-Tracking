@@ -5,6 +5,7 @@ foldername = ['MOT17-02-FRCNN'; 'MOT17-04-FRCNN'; 'MOT17-05-FRCNN';
     'MOT17-09-FRCNN'; 'MOT17-10-FRCNN'; 'MOT17-11-FRCNN'; 'MOT17-13-FRCNN'];
 
 seqnum = size(foldername, 1);
+sample_cnt = zeros(seqnum, 1);
 for i = 1:seqnum
     pos_cnt = 0;
     neg_cnt = 0;
@@ -102,12 +103,12 @@ for i = 1:seqnum
     y_bb = y_bb(r,:);
     
     total_cnt = pos_cnt + neg_cnt;
-    splice = fix(total_cnt / 1000);
+    sample_cnt(i, 1) = total_cnt;
     
-    for j = 1:1000
-        x1_bb_splice = x1_bb(1+(j-1)*splice:j*splice, :);
-        x2_bb_splice = x2_bb(1+(j-1)*splice:j*splice, :);
-        y_bb_splice = y_bb(1+(j-1)*splice:j*splice, :);
+    for j = 1:total_cnt
+        x1_bb_splice = x1_bb(j, :);
+        x2_bb_splice = x2_bb(j, :);
+        y_bb_splice = y_bb(j, :);
         save([fpath foldername(i, :) '/a/x1_bb_splice_' num2str(j) '.mat'], 'x1_bb_splice');
         save([fpath foldername(i, :) '/a/x2_bb_splice_' num2str(j) '.mat'], 'x2_bb_splice');
         save([fpath foldername(i, :) '/a/y_bb_splice_' num2str(j) '.mat'], 'y_bb_splice');

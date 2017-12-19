@@ -1,6 +1,6 @@
 
 # import keras
-from keras.layers import Input, Flatten, concatenate, Dropout, Dense
+from keras.layers import Input, Flatten, concatenate, Dense
 from keras.models import Model
 from keras import optimizers
 

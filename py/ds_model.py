@@ -1,0 +1,32 @@
+from keras.models import Sequential
+from keras.layers import Dense
+from keras import optimizers
+from training_plot import training_plot
+import numpy as np
+
+fpath = '../../MOT17/train/'
+
+learning_rate, learning_rate_decay = 1e-4, 6e-7
+fit_epochs, fit_batch_size, fit_verbose = 7, 64, 2
+
+ds_x = np.load('%sds_x.npy' % fpath)
+ds_y = np.load('%sds_y.npy' % fpath)
+split_factor, length = 0.7, ds_x.shape[0]
+split = int(split_factor * length)
+ds_x_train, ds_x_test = ds_x[0:split], ds_x[split:length]
+ds_y_train, ds_y_test = ds_y[0:split], ds_y[split:length]
+
+model = Sequential()
+model.add(Dense(2, input_shape=(2,), activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+
+my_adam = optimizers.Adam(lr=learning_rate, beta_1=0.9, beta_2=0.999,
+                          epsilon=1e-08, decay=learning_rate_decay)
+model.compile(optimizer=my_adam, loss='binary_crossentropy',
+              metrics=['accuracy'])
+history = model.fit(ds_x_train, ds_y_train, epochs=fit_epochs,
+                    batch_size=fit_batch_size, verbose=fit_verbose,
+                    validation_data=(ds_x_test, ds_y_test))
+
+training_plot(history)
+model.save('ds_model.h5')
