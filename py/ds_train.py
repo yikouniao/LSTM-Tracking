@@ -64,7 +64,7 @@ for folder, res in zip(foldername, resolution):
                 # saves positive samples
                 ds_x[ds_cnt] = np.array([v_loss, p_loss], dtype='float32')
                 ds_y[ds_cnt] = np.array([1], dtype='float32')
-                ds_cnt = ds_cnt + 1
+                ds_cnt += 1
 
                 # saves negative samples
                 bb_f = bb_all[bb_all[:, 0] == f_cnt, :]
@@ -80,7 +80,7 @@ for folder, res in zip(foldername, resolution):
                     v_loss, p_loss = v_loss[0], p_loss[0]
                     ds_x[ds_cnt] = np.array([v_loss, p_loss], dtype='float32')
                     ds_y[ds_cnt] = np.array([0], dtype='float32')
-                    ds_cnt = ds_cnt + 1
+                    ds_cnt += 1
 
                 # saves current bb, v, p
                 bb_list = np.delete(bb_list, (0), axis=0)

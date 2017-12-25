@@ -7,7 +7,7 @@ resolution = [[1920, 1080]; [1920, 1080]; [640, 480]; [1920, 1080];...
     [1920, 1080]; [1920, 1080]; [1920, 1080]];
 fps = [30; 30; 14; 30; 30; 30; 25];
 split_factor = 0.7;
-scale_factor = 6; % keeps the calculated velocities not too small
+scale_factor = 180; % keeps the calculated velocities not too small
 
 v_x_train = [];
 v_y_train = [];

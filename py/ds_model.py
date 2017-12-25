@@ -13,8 +13,8 @@ ds_x = np.load('%sds_x.npy' % fpath)
 ds_y = np.load('%sds_y.npy' % fpath)
 split_factor, length = 0.7, ds_x.shape[0]
 split = int(split_factor * length)
-ds_x_train, ds_x_test = ds_x[0:split], ds_x[split:length]
-ds_y_train, ds_y_test = ds_y[0:split], ds_y[split:length]
+ds_x_train, ds_x_test = ds_x[:split], ds_x[split:]
+ds_y_train, ds_y_test = ds_y[:split], ds_y[split:]
 
 model = Sequential()
 model.add(Dense(2, input_shape=(2,), activation='relu'))
