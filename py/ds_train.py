@@ -1,7 +1,7 @@
 from keras.models import load_model
 from scipy import io
 import numpy as np
-from bb_feature import get_iou, get_v
+from bb_proc import get_iou, get_v
 
 fpath = '../../MOT17/train/'
 # foldername = ('MOT17-02-FRCNN', 'MOT17-04-FRCNN', 'MOT17-05-FRCNN',

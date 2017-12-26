@@ -1,6 +1,12 @@
 from keras.models import load_model
 import numpy as np
 
+scale_factor = 180
+
+v_model = load_model('v_model.h5')
+p_model = load_model('p_model.h5')
+ds_model = load_model('ds_model.h5')
+
 def get_iou(bb_a, bb_b):
     """
     calculates the intersection over union of two bounding boxes
@@ -40,19 +46,12 @@ def get_v(bb1, bb2, resolution):
     returns velocity: array [[x_v, y_v]] with type float32
     """
 
-    scale_factor = 180
-
     # gets the center position
     c1 = (bb1[0] + bb1[2] / 2, bb1[1] + bb1[3] / 2)
     c2 = (bb2[0] + bb2[2] / 2, bb2[1] + bb2[3] / 2)
     return np.array([[(c2[0] - c1[0]) * scale_factor / resolution[0],
                       (c2[1] - c1[1]) * scale_factor / resolution[1]]],
                     dtype='float32')
-
-
-v_model = load_model('v_model.h5')
-p_model = load_model('p_model.h5')
-ds_model = load_model('ds_model.h5')
 
 
 def ds_score(id_, bb, resolution):
@@ -76,8 +75,22 @@ def ds_score(id_, bb, resolution):
         x=np.array([id_['p_list']]), y=get_iou(id_['bb'][-1], bb),
         batch_size=1, verbose=0)
     v_loss, p_loss = v_loss[0], p_loss[0]
-    return ds_model.predict(x=np.array([v_loss, p_loss], dtype='float32'),
-                            batch_size=1,verbose=0)
+    return ds_model.predict(x=np.array([[v_loss, p_loss]], dtype='float32'),
+                            batch_size=1, verbose=0)
+
+
+def bb_update_vp(id_, bb, resolution):
+    """
+    updates v_list and p_list for id_
+    the format of input parameters is the same as ds_score
+    returns nothing
+    """
+    id_['v_list'] = np.delete(id_['v_list'], (0), axis=0)    
+    id_['v_list'] = np.append(id_['v_list'], get_v(
+        id_['bb'][-1], bb, resolution), axis=0)
+    id_['p_list'] = np.delete(id_['p_list'], (0), axis=0)
+    id_['p_list'] = np.append(id_['p_list'], get_iou(
+        id_['bb'][-1], bb), axis=0)
 
 
 def bb_pred(id_, resolution):
@@ -87,13 +100,18 @@ def bb_pred(id_, resolution):
     returns nothing
     """
     v = v_model.predict(x=np.array([id_['v_list']]), batch_size=1, verbose=0)
+    new_bb = id_['bb'][-1]
+    new_bb[0] += v[0][0] * resolution[0] / scale_factor
+    new_bb[1] += v[0][1] * resolution[1] / scale_factor
+    bb_update_vp(id_, new_bb, resolution)
+    id_['bb'].append(new_bb)
 
 
-def bb_update_vp(id_, bb, resolution):
+def bb_update_vp2(id_, bb, resolution):
     """
-    updates v_list and p_list for id_
+    updates v_list and p_list for an id_ with short length
     the format of input parameters is the same as ds_score
     returns nothing
     """
-    v_list = np.delete(v_list, (0), axis=0)
-    v_list = np.append(v_list, current_v, axis=0)
+    id_['v_list'][len(id_['bb']) - 1] = get_v(id_['bb'][-1], bb, resolution)
+    id_['p_list'][len(id_['bb']) - 1] = get_iou(id_['bb'][-1], bb)
