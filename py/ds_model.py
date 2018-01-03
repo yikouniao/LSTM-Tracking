@@ -6,8 +6,8 @@ import numpy as np
 
 fpath = '../../MOT17/train/'
 
-learning_rate, learning_rate_decay = 1e-4, 6e-7
-fit_epochs, fit_batch_size, fit_verbose = 7, 64, 2
+learning_rate, learning_rate_decay = 1e-4, 5e-6
+fit_epochs, fit_batch_size, fit_verbose = 3, 64, 2
 
 ds_x = np.load('%sds_x.npy' % fpath)
 ds_y = np.load('%sds_y.npy' % fpath)
@@ -17,7 +17,7 @@ ds_x_train, ds_x_test = ds_x[:split], ds_x[split:]
 ds_y_train, ds_y_test = ds_y[:split], ds_y[split:]
 
 model = Sequential()
-model.add(Dense(2, input_shape=(2,), activation='relu'))
+model.add(Dense(28, input_shape=(2,), activation='sigmoid'))
 model.add(Dense(1, activation='sigmoid'))
 
 my_adam = optimizers.Adam(lr=learning_rate, beta_1=0.9, beta_2=0.999,

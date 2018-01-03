@@ -28,7 +28,7 @@ def get_iou(bb_a, bb_b):
 
     # checks if the iou is 0
     if inter_x_left >= inter_x_right or inter_y_top >= inter_y_bottom:
-        return 0
+        return np.array([[0]], dtype='float32')
 
     # calculates the iou score
     inter_area = ((inter_x_right - inter_x_left) *
@@ -105,6 +105,7 @@ def bb_pred(id_, resolution):
     new_bb[1] += v[0][1] * resolution[1] / scale_factor
     bb_update_vp(id_, new_bb, resolution)
     id_['bb'].append(new_bb)
+    id_['pred'] += 1
 
 
 def bb_update_vp2(id_, bb, resolution):

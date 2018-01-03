@@ -1,5 +1,6 @@
 import numpy as np
 from operator import itemgetter
+from time import time
 from bb_proc import get_iou, bb_update_vp2, ds_score, bb_update_vp, bb_pred
 
 # fpath = '../../MOT17/test/'
@@ -11,25 +12,33 @@ from bb_proc import get_iou, bb_update_vp2, ds_score, bb_update_vp, bb_pred
 # length = (450, 1500, 1194, 500, 625, 900, 750)
 
 fpath = '../../MOT17/train/'
-foldername = ('MOT17-02-FRCNN', 'MOT17-04-FRCNN', 'MOT17-05-FRCNN',
-              'MOT17-09-FRCNN', 'MOT17-10-FRCNN', 'MOT17-11-FRCNN',
-              'MOT17-13-FRCNN')
-resolution = ((1920, 1080), (1920, 1080), (640, 480), (1920, 1080),
-              (1920, 1080), (1920, 1080), (1920, 1080))
-length = (600, 1050, 837, 525, 654, 900, 750)
+# foldername = ('MOT17-02-FRCNN', 'MOT17-04-FRCNN', 'MOT17-05-FRCNN',
+#               'MOT17-09-FRCNN', 'MOT17-10-FRCNN', 'MOT17-11-FRCNN',
+#               'MOT17-13-FRCNN')
+# resolution = ((1920, 1080), (1920, 1080), (640, 480), (1920, 1080),
+#               (1920, 1080), (1920, 1080), (1920, 1080))
+# length = (600, 1050, 837, 525, 654, 900, 750)
+foldername = ('MOT17-11-FRCNN', 'MOT17-13-FRCNN')
+resolution = ((1920, 1080), (1920, 1080))
+length = (900, 750)
 
 threshold_l = 0  # low detection threshold
-threshold_h = 0.7  # high detection threshold
-threshold_s = 0.5  # score threshold
-threshold_s2 = 0.5 # score threshold for id shorter than 7 frames
-t_min = 2 # time threshold
+threshold_h = 0.9  # high detection threshold
+threshold_s = 0.4  # score threshold
+threshold_s2 = 0.4 # score threshold for id shorter than 7 frames
+t_min = 4 # time threshold
 
 id_active, id_inactive = [], []
 
+time_cnt = 0
+
 for folder, res, l in zip(foldername, resolution, length):
+    print('Processing %s...' % folder)
     fname_det = '%s%s/det/det.txt' % (fpath, folder)
     dets = np.loadtxt(fname_det, delimiter=',')
     dets = dets.astype('float32')
+    start = time()
+
     for f_num in range(1, l + 1):
         dets_f = dets[dets[:, 0] == f_num, :]
         dets_f = dets_f[dets_f[:, -1] > threshold_l, :]
@@ -40,14 +49,15 @@ for folder, res, l in zip(foldername, resolution, length):
         matched_flag = np.zeros(dets_f.shape[0], dtype=bool)
         id_updated  = []
         for id_ in id_active:
+            # if this id is too short to use lstm
             if len(id_['bb']) < 7:
                 # calculates the bb matching score
-                for det, m_scores, flag in zip(dets_f, match_scores,
-                                               matched_flag):
-                    if flag == True:
-                        m_scores = 0
+                for det_num, det in enumerate(dets_f):
+                    if matched_flag[det_num] == True:
+                        match_scores[det_num] = 0
                     else:
-                        m_scores = get_iou(id_['bb'][-1], det[2:6])
+                        match_scores[det_num] = get_iou(
+                            id_['bb'][-1], det[2:6])[0][0]
                 best_match = dets_f[match_scores.argmax()]
                 best_match_score = match_scores.max()
 
@@ -68,12 +78,12 @@ for folder, res, l in zip(foldername, resolution, length):
 
             else:
                 # calculates the bb matching score
-                for det, m_scores, flag in zip(dets_f, match_scores,
-                                               matched_flag):
-                    if flag == True:
-                        m_scores = 0
+                for det_num, det in enumerate(dets_f):
+                    if matched_flag[det_num] == True:
+                        match_scores[det_num] = 0
                     else:
-                        m_scores = ds_score(id_, det[2:6], res)
+                        match_scores[det_num] = ds_score(
+                            id_, det[2:6], res)[0][0]
                 best_match = dets_f[match_scores.argmax()]
                 best_match_score = match_scores.max()
 
@@ -90,7 +100,6 @@ for folder, res, l in zip(foldername, resolution, length):
                 elif id_['pred'] < 6:
                     # not updating max_score here
                     bb_pred(id_, res)
-                    id_['pred'] += 1
                     id_updated.append(id_)
 
                 # finishes this id
@@ -111,7 +120,9 @@ for folder, res, l in zip(foldername, resolution, length):
                    'p_list': np.zeros((6, 1), dtype='float32'),
                    'max_score': det[-1],
                    'f_start': f_num,
-                   'pred': 0} for det in dets_f]
+                   'pred': 0}
+                   for det_num, det in enumerate(dets_f)
+                   if matched_flag[det_num] == False]
         id_active = id_updated + id_new
 
     # finishes the remained ids
@@ -125,13 +136,17 @@ for folder, res, l in zip(foldername, resolution, length):
         if id_['max_score'] >= threshold_h and len(id_['bb']) >= t_min:
             id_inactive.append(id_)
     
+    end = time()
+    time_cnt += end - start
     # now id_inactive is the final result
     result_bb = []
     for id_num, id_ in enumerate(id_inactive):
         for bb_num, bb in enumerate(id_['bb']):
-            result_bb += [[id_['f_start'] + bb_num, id_num + 1,
-                           bb[0], bb[1], bb[2], bb[3], 1, -1, -1, -1]]
-    result_bb.sort(key=itemgetter(0, 1))
+            result_bb += [[id_['f_start'] + bb_num, id_num + 1, bb[0], bb[1],
+                           bb[2], bb[3], id_['max_score'], -1, -1, -1]]
+    result_bb.sort(key=itemgetter(1, 0))
     with open('./results/%s.txt' % folder, 'w') as rst_f:
         for bb in result_bb:
             rst_f.write(','.join([str(value) for value in bb]) + '\n')
+
+print('Total tracking time consumption:', time_cnt, 's.')

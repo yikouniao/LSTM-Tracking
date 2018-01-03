@@ -61,7 +61,7 @@
 
 from keras.models import load_model
 import numpy as np
-v_model = load_model('v_model.h5')
+ds_model = load_model('ds_model.h5')
 # vv_model = load_model('v_model (copy).h5')
 # num = -1.0
 # while num <= 1.0:
@@ -78,10 +78,18 @@ v_model = load_model('v_model.h5')
 # v = v_model.predict(x=xx, batch_size=1, verbose=0)
 # print(v)
 # print(vv_model.predict(x=xx, batch_size=1, verbose=0))
-num = -1
-xx = np.array([[[num, num], [num, num], [num, num],
-                [num, num], [num, num], [num, num]]])
-print(v_model.predict(x=xx, batch_size=1, verbose=0))
+
+# num = -1
+# xx = np.array([[[num, num], [num, num], [num, num],
+#                 [num, num], [num, num], [num, num]]])
+
+# fpath = '../../MOT17/train/'
+# ds_x = np.load('%sds_x.npy' % fpath)
+# ds_y = np.load('%sds_y.npy' % fpath)
+# print(ds_model.evaluate(x=ds_x, y=ds_y, batch_size=64, verbose=0))
+
+xx = np.array([[2.4,0.005],[2.3,0.005]])
+print(ds_model.predict(x=xx, batch_size=1, verbose=0))
 
 # import numpy as np
 # a = np.array([[1,2],[3,4],[5,6]])

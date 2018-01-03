@@ -2,18 +2,19 @@ from keras.models import load_model
 from scipy import io
 import numpy as np
 from bb_proc import get_iou, get_v
+import random
 
 fpath = '../../MOT17/train/'
-# foldername = ('MOT17-02-FRCNN', 'MOT17-04-FRCNN', 'MOT17-05-FRCNN',
-#               'MOT17-09-FRCNN', 'MOT17-10-FRCNN', 'MOT17-11-FRCNN',
-#               'MOT17-13-FRCNN')
-# resolution = ((1920, 1080), (1920, 1080), (640, 480), (1920, 1080),
-#               (1920, 1080), (1920, 1080), (1920, 1080))
-foldername = ('MOT17-02-FRCNN', 'MOT17-04-FRCNN')
-resolution = ((1920, 1080), (1920, 1080))
+foldername = ('MOT17-02-FRCNN', 'MOT17-04-FRCNN', 'MOT17-05-FRCNN',
+              'MOT17-09-FRCNN', 'MOT17-10-FRCNN', 'MOT17-11-FRCNN',
+              'MOT17-13-FRCNN')
+resolution = ((1920, 1080), (1920, 1080), (640, 480), (1920, 1080),
+              (1920, 1080), (1920, 1080), (1920, 1080))
+# foldername = ('MOT17-02-FRCNN', 'MOT17-04-FRCNN')
+# resolution = ((1920, 1080), (1920, 1080))
 
-ds_x = np.zeros((3387599, 2), dtype='float32')
-ds_y = np.zeros((3387599, 1), dtype='float32')
+ds_x = np.zeros((587599, 2), dtype='float32')
+ds_y = np.zeros((587599, 1), dtype='float32')
 ds_cnt = 0
 
 v_model = load_model('v_model.h5')
@@ -70,6 +71,9 @@ for folder, res in zip(foldername, resolution):
                 bb_f = bb_all[bb_all[:, 0] == f_cnt, :]
                 for m in range(bb_f.shape[0]):
                     if bb_f[m, 1] == id_cnt:
+                        continue
+                    # randomly discards most of negative samples
+                    if random.randint(0, 99) > 6:
                         continue
                     neg_v[0] = get_v(bb_list[6], bb_f[m, 2:6], res)
                     neg_p[0] = get_iou(bb_list[6], bb_f[m, 2:6])
