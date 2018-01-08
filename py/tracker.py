@@ -12,23 +12,22 @@ from bb_proc import get_iou, bb_update_vp2, ds_score, bb_update_vp, bb_pred
 # length = (450, 1500, 1194, 500, 625, 900, 750)
 
 fpath = '../../MOT17/train/'
-# foldername = ('MOT17-02-FRCNN', 'MOT17-04-FRCNN', 'MOT17-05-FRCNN',
-#               'MOT17-09-FRCNN', 'MOT17-10-FRCNN', 'MOT17-11-FRCNN',
-#               'MOT17-13-FRCNN')
-# resolution = ((1920, 1080), (1920, 1080), (640, 480), (1920, 1080),
-#               (1920, 1080), (1920, 1080), (1920, 1080))
-# length = (600, 1050, 837, 525, 654, 900, 750)
-foldername = ('MOT17-11-FRCNN', 'MOT17-13-FRCNN')
-resolution = ((1920, 1080), (1920, 1080))
-length = (900, 750)
+foldername = ('MOT17-02-FRCNN', 'MOT17-04-FRCNN', 'MOT17-05-FRCNN',
+              'MOT17-09-FRCNN', 'MOT17-10-FRCNN', 'MOT17-11-FRCNN',
+              'MOT17-13-FRCNN')
+resolution = ((1920, 1080), (1920, 1080), (640, 480), (1920, 1080),
+              (1920, 1080), (1920, 1080), (1920, 1080))
+length = (600, 1050, 837, 525, 654, 900, 750)
+
+# foldername = ('MOT17-11-FRCNN', 'MOT17-13-FRCNN')
+# resolution = ((1920, 1080), (1920, 1080))
+# length = (900, 750)
 
 threshold_l = 0  # low detection threshold
 threshold_h = 0.9  # high detection threshold
-threshold_s = 0.4  # score threshold
+threshold_s = 0.07  # score threshold
 threshold_s2 = 0.4 # score threshold for id shorter than 7 frames
 t_min = 4 # time threshold
-
-id_active, id_inactive = [], []
 
 time_cnt = 0
 
@@ -38,6 +37,8 @@ for folder, res, l in zip(foldername, resolution, length):
     dets = np.loadtxt(fname_det, delimiter=',')
     dets = dets.astype('float32')
     start = time()
+
+    id_active, id_inactive = [], []
 
     for f_num in range(1, l + 1):
         dets_f = dets[dets[:, 0] == f_num, :]
