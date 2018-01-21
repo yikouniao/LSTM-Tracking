@@ -3,6 +3,7 @@ from operator import itemgetter
 from time import time
 from bb_proc import get_iou, bb_update_vp2, ds_score, bb_update_vp, bb_pred
 
+# FRCNN test
 # fpath = '../../MOT17/test/'
 # foldername = ('MOT17-01-FRCNN', 'MOT17-03-FRCNN', 'MOT17-06-FRCNN',
 #               'MOT17-07-FRCNN', 'MOT17-08-FRCNN', 'MOT17-12-FRCNN',
@@ -11,23 +12,70 @@ from bb_proc import get_iou, bb_update_vp2, ds_score, bb_update_vp, bb_pred
 #               (1920, 1080), (1920, 1080), (1920, 1080))
 # length = (450, 1500, 1194, 500, 625, 900, 750)
 
+# FRCNN train
+# fpath = '../../MOT17/train/'
+# foldername = ('MOT17-02-FRCNN', 'MOT17-04-FRCNN', 'MOT17-05-FRCNN',
+#               'MOT17-09-FRCNN', 'MOT17-10-FRCNN', 'MOT17-11-FRCNN',
+#               'MOT17-13-FRCNN')
+# resolution = ((1920, 1080), (1920, 1080), (640, 480), (1920, 1080),
+#               (1920, 1080), (1920, 1080), (1920, 1080))
+# length = (600, 1050, 837, 525, 654, 900, 750)
+
+# threshold_l = 0  # low detection threshold
+# threshold_h = 0.9  # high detection threshold
+# threshold_s = 0.0377  # score threshold
+# threshold_s2 = 0.4  # score threshold for id shorter than 7 frames
+# t_min = 4  # time threshold
+
+
+# SDP test
+# fpath = '../../MOT17/test/'
+# foldername = ('MOT17-01-SDP', 'MOT17-03-SDP', 'MOT17-06-SDP',
+#               'MOT17-07-SDP', 'MOT17-08-SDP', 'MOT17-12-SDP',
+#               'MOT17-14-SDP')
+# resolution = ((1920, 1080), (1920, 1080), (640, 480), (1920, 1080),
+#               (1920, 1080), (1920, 1080), (1920, 1080))
+# length = (450, 1500, 1194, 500, 625, 900, 750)
+
+# SDP train
+# fpath = '../../MOT17/train/'
+# foldername = ('MOT17-02-SDP', 'MOT17-04-SDP', 'MOT17-05-SDP',
+#               'MOT17-09-SDP', 'MOT17-10-SDP', 'MOT17-11-SDP',
+#               'MOT17-13-SDP')
+# resolution = ((1920, 1080), (1920, 1080), (640, 480), (1920, 1080),
+#               (1920, 1080), (1920, 1080), (1920, 1080))
+# length = (600, 1050, 837, 525, 654, 900, 750)
+
+# threshold_l = 0.3  # low detection threshold
+# threshold_h = 0.5  # high detection threshold
+# threshold_s = 0.0359  # score threshold
+# threshold_s2 = 0.3 # score threshold for id shorter than 7 frames
+# t_min = 5  # time threshold
+
+
+# DPM test
+# fpath = '../../MOT17/test/'
+# foldername = ('MOT17-01-DPM', 'MOT17-03-DPM', 'MOT17-06-DPM',
+#               'MOT17-07-DPM', 'MOT17-08-DPM', 'MOT17-12-DPM',
+#               'MOT17-14-DPM')
+# resolution = ((1920, 1080), (1920, 1080), (640, 480), (1920, 1080),
+#               (1920, 1080), (1920, 1080), (1920, 1080))
+# length = (450, 1500, 1194, 500, 625, 900, 750)
+
+# DPM train
 fpath = '../../MOT17/train/'
-foldername = ('MOT17-02-FRCNN', 'MOT17-04-FRCNN', 'MOT17-05-FRCNN',
-              'MOT17-09-FRCNN', 'MOT17-10-FRCNN', 'MOT17-11-FRCNN',
-              'MOT17-13-FRCNN')
+foldername = ('MOT17-02-DPM', 'MOT17-04-DPM', 'MOT17-05-DPM',
+              'MOT17-09-DPM', 'MOT17-10-DPM', 'MOT17-11-DPM',
+              'MOT17-13-DPM')
 resolution = ((1920, 1080), (1920, 1080), (640, 480), (1920, 1080),
               (1920, 1080), (1920, 1080), (1920, 1080))
 length = (600, 1050, 837, 525, 654, 900, 750)
 
-# foldername = ('MOT17-11-FRCNN', 'MOT17-13-FRCNN')
-# resolution = ((1920, 1080), (1920, 1080))
-# length = (900, 750)
-
-threshold_l = 0  # low detection threshold
-threshold_h = 0.9  # high detection threshold
-threshold_s = 0.07  # score threshold
-threshold_s2 = 0.4 # score threshold for id shorter than 7 frames
-t_min = 4 # time threshold
+threshold_l = -10  # low detection threshold
+threshold_h = -9  # high detection threshold
+threshold_s = 0.036  # score threshold
+threshold_s2 = 0.36  # score threshold for id shorter than 7 frames
+t_min = 7  # time threshold
 
 time_cnt = 0
 
@@ -42,7 +90,7 @@ for folder, res, l in zip(foldername, resolution, length):
 
     for f_num in range(1, l + 1):
         dets_f = dets[dets[:, 0] == f_num, :]
-        dets_f = dets_f[dets_f[:, -1] > threshold_l, :]
+        dets_f = dets_f[dets_f[:, 6] > threshold_l, :]
         if dets_f.shape[0] == 0:
             continue
         
@@ -119,7 +167,7 @@ for folder, res, l in zip(foldername, resolution, length):
         id_new = [{'bb': [det[2:6]],
                    'v_list': np.zeros((6, 2), dtype='float32'),
                    'p_list': np.zeros((6, 1), dtype='float32'),
-                   'max_score': det[-1],
+                   'max_score': det[6],
                    'f_start': f_num,
                    'pred': 0}
                    for det_num, det in enumerate(dets_f)

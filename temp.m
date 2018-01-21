@@ -48,17 +48,17 @@ clear; clc;
 %fname = '../MOT17/train/MOT17-04-FRCNN/img1/000192.jpg';
 %draw_bb(fname, bb(3), bb(4), bb(5), bb(6));
 
-color_table = [[1 0 0];[0 1 0];[0 0 1];[1 1 0];[1 0 1];[0 1 1];[1 1 1];...
-               [0 0 0];[0,0.7,0.9];[0.7,0,0.9];[0.8,0.7,0.1]];
-fpath = '../MOT17/train/';
-foldername = 'MOT17-11-FRCNN';
-seq_len = 750;
-rst_name = ['./py/results/' foldername '.txt'];
-%rst_name = [fpath foldername '/gt/gt.txt'];
-rst = load(rst_name);
-for f = 1:seq_len
-    rst_f = rst(rst(:,1)==f, :);
-    fname = [fpath foldername '/img1/' num2fname(f)];
-    draw_bbs(fname, rst_f, color_table)
-    pause;
-end
+% color_table = [[1 0 0];[0 1 0];[0 0 1];[1 1 0];[1 0 1];[0 1 1];[1 1 1];...
+%                [0 0 0];[0,0.7,0.9];[0.7,0,0.9];[0.8,0.7,0.1]];
+% fpath = '../MOT17/train/';
+% foldername = 'MOT17-11-FRCNN';
+% seq_len = 750;
+% rst_name = ['./py/results/' foldername '.txt'];
+% %rst_name = [fpath foldername '/gt/gt.txt'];
+% rst = load(rst_name);
+% for f = 1:seq_len
+%     rst_f = rst(rst(:,1)==f, :);
+%     fname = [fpath foldername '/img1/' num2fname(f)];
+%     draw_bbs(fname, rst_f, color_table)
+%     pause;
+% end
