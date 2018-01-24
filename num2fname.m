@@ -5,7 +5,9 @@ function fname = num2fname(num)
         fname = ['00000' num2str(num) '.jpg'];
     elseif num < 100
         fname = ['0000' num2str(num) '.jpg'];
-    else
+    elseif num < 1000
         fname = ['000' num2str(num) '.jpg'];
+    else
+        fname = ['00' num2str(num) '.jpg'];
     end
 end

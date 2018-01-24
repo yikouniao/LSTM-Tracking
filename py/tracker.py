@@ -29,13 +29,13 @@ from bb_proc import get_iou, bb_update_vp2, ds_score, bb_update_vp, bb_pred
 
 
 # SDP test
-# fpath = '../../MOT17/test/'
-# foldername = ('MOT17-01-SDP', 'MOT17-03-SDP', 'MOT17-06-SDP',
-#               'MOT17-07-SDP', 'MOT17-08-SDP', 'MOT17-12-SDP',
-#               'MOT17-14-SDP')
-# resolution = ((1920, 1080), (1920, 1080), (640, 480), (1920, 1080),
-#               (1920, 1080), (1920, 1080), (1920, 1080))
-# length = (450, 1500, 1194, 500, 625, 900, 750)
+fpath = '../../MOT17/test/'
+foldername = ('MOT17-01-SDP', 'MOT17-03-SDP', 'MOT17-06-SDP',
+              'MOT17-07-SDP', 'MOT17-08-SDP', 'MOT17-12-SDP',
+              'MOT17-14-SDP')
+resolution = ((1920, 1080), (1920, 1080), (640, 480), (1920, 1080),
+              (1920, 1080), (1920, 1080), (1920, 1080))
+length = (450, 1500, 1194, 500, 625, 900, 750)
 
 # SDP train
 # fpath = '../../MOT17/train/'
@@ -46,21 +46,21 @@ from bb_proc import get_iou, bb_update_vp2, ds_score, bb_update_vp, bb_pred
 #               (1920, 1080), (1920, 1080), (1920, 1080))
 # length = (600, 1050, 837, 525, 654, 900, 750)
 
-# threshold_l = 0.3  # low detection threshold
-# threshold_h = 0.5  # high detection threshold
-# threshold_s = 0.0359  # score threshold
-# threshold_s2 = 0.3 # score threshold for id shorter than 7 frames
-# t_min = 5  # time threshold
+threshold_l = 0.3  # low detection threshold
+threshold_h = 0.5  # high detection threshold
+threshold_s = 0.0359  # score threshold
+threshold_s2 = 0.3 # score threshold for id shorter than 7 frames
+t_min = 5  # time threshold
 
 
 # DPM test
-fpath = '../../MOT17/test/'
-foldername = ('MOT17-01-DPM', 'MOT17-03-DPM', 'MOT17-06-DPM',
-              'MOT17-07-DPM', 'MOT17-08-DPM', 'MOT17-12-DPM',
-              'MOT17-14-DPM')
-resolution = ((1920, 1080), (1920, 1080), (640, 480), (1920, 1080),
-              (1920, 1080), (1920, 1080), (1920, 1080))
-length = (450, 1500, 1194, 500, 625, 900, 750)
+# fpath = '../../MOT17/test/'
+# foldername = ('MOT17-01-DPM', 'MOT17-03-DPM', 'MOT17-06-DPM',
+#               'MOT17-07-DPM', 'MOT17-08-DPM', 'MOT17-12-DPM',
+#               'MOT17-14-DPM')
+# resolution = ((1920, 1080), (1920, 1080), (640, 480), (1920, 1080),
+#               (1920, 1080), (1920, 1080), (1920, 1080))
+# length = (450, 1500, 1194, 500, 625, 900, 750)
 
 # DPM train
 # fpath = '../../MOT17/train/'
@@ -71,11 +71,12 @@ length = (450, 1500, 1194, 500, 625, 900, 750)
 #               (1920, 1080), (1920, 1080), (1920, 1080))
 # length = (600, 1050, 837, 525, 654, 900, 750)
 
-threshold_l = -10  # low detection threshold
-threshold_h = -9  # high detection threshold
-threshold_s = 0.0155  # score threshold
-threshold_s2 = 0.36  # score threshold for id shorter than 7 frames
-t_min = 7  # time threshold
+# threshold_l = -10  # low detection threshold
+# threshold_h = -9  # high detection threshold
+# threshold_s = 0.0155  # score threshold
+# threshold_s2 = 0.36  # score threshold for id shorter than 7 frames
+# t_min = 7  # time threshold
+
 
 time_cnt = 0
 
@@ -192,7 +193,7 @@ for folder, res, l in zip(foldername, resolution, length):
     for id_num, id_ in enumerate(id_inactive):
         for bb_num, bb in enumerate(id_['bb']):
             result_bb += [[id_['f_start'] + bb_num, id_num + 1, bb[0], bb[1],
-                           bb[2], bb[3], id_['max_score'], -1, -1, -1]]
+                           bb[2], bb[3], -1, -1, -1, -1]]
     result_bb.sort(key=itemgetter(1, 0))
     with open('./results/%s.txt' % folder, 'w') as rst_f:
         for bb in result_bb:

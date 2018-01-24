@@ -15,6 +15,12 @@
 *.png
 */*.png
 
+*.eps
+*/*.eps
+
+*.pdf
+*/*.pdf
+
 *.csv
 */*.csv
 
@@ -23,3 +29,6 @@
 
 *.npy
 */*.npy
+
+*.pyc
+*/*.pyc
