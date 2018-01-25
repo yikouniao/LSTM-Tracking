@@ -4,13 +4,13 @@ from time import time
 from bb_proc import get_iou, bb_update_vp2, ds_score, bb_update_vp, bb_pred
 
 # FRCNN test
-# fpath = '../../MOT17/test/'
-# foldername = ('MOT17-01-FRCNN', 'MOT17-03-FRCNN', 'MOT17-06-FRCNN',
-#               'MOT17-07-FRCNN', 'MOT17-08-FRCNN', 'MOT17-12-FRCNN',
-#               'MOT17-14-FRCNN')
-# resolution = ((1920, 1080), (1920, 1080), (640, 480), (1920, 1080),
-#               (1920, 1080), (1920, 1080), (1920, 1080))
-# length = (450, 1500, 1194, 500, 625, 900, 750)
+fpath = '../../MOT17/test/'
+foldername = ('MOT17-01-FRCNN', 'MOT17-03-FRCNN', 'MOT17-06-FRCNN',
+              'MOT17-07-FRCNN', 'MOT17-08-FRCNN', 'MOT17-12-FRCNN',
+              'MOT17-14-FRCNN')
+resolution = ((1920, 1080), (1920, 1080), (640, 480), (1920, 1080),
+              (1920, 1080), (1920, 1080), (1920, 1080))
+length = (450, 1500, 1194, 500, 625, 900, 750)
 
 # FRCNN train
 # fpath = '../../MOT17/train/'
@@ -21,21 +21,21 @@ from bb_proc import get_iou, bb_update_vp2, ds_score, bb_update_vp, bb_pred
 #               (1920, 1080), (1920, 1080), (1920, 1080))
 # length = (600, 1050, 837, 525, 654, 900, 750)
 
-# threshold_l = 0  # low detection threshold
-# threshold_h = 0.9  # high detection threshold
-# threshold_s = 0.0377  # score threshold
-# threshold_s2 = 0.4  # score threshold for id shorter than 7 frames
-# t_min = 4  # time threshold
+threshold_l = 0  # low detection threshold
+threshold_h = 0.9  # high detection threshold
+threshold_s = 0.0377  # score threshold
+threshold_s2 = 0.4  # score threshold for id shorter than 7 frames
+t_min = 4  # time threshold
 
 
 # SDP test
-fpath = '../../MOT17/test/'
-foldername = ('MOT17-01-SDP', 'MOT17-03-SDP', 'MOT17-06-SDP',
-              'MOT17-07-SDP', 'MOT17-08-SDP', 'MOT17-12-SDP',
-              'MOT17-14-SDP')
-resolution = ((1920, 1080), (1920, 1080), (640, 480), (1920, 1080),
-              (1920, 1080), (1920, 1080), (1920, 1080))
-length = (450, 1500, 1194, 500, 625, 900, 750)
+# fpath = '../../MOT17/test/'
+# foldername = ('MOT17-01-SDP', 'MOT17-03-SDP', 'MOT17-06-SDP',
+#               'MOT17-07-SDP', 'MOT17-08-SDP', 'MOT17-12-SDP',
+#               'MOT17-14-SDP')
+# resolution = ((1920, 1080), (1920, 1080), (640, 480), (1920, 1080),
+#               (1920, 1080), (1920, 1080), (1920, 1080))
+# length = (450, 1500, 1194, 500, 625, 900, 750)
 
 # SDP train
 # fpath = '../../MOT17/train/'
@@ -46,11 +46,11 @@ length = (450, 1500, 1194, 500, 625, 900, 750)
 #               (1920, 1080), (1920, 1080), (1920, 1080))
 # length = (600, 1050, 837, 525, 654, 900, 750)
 
-threshold_l = 0.3  # low detection threshold
-threshold_h = 0.5  # high detection threshold
-threshold_s = 0.0359  # score threshold
-threshold_s2 = 0.3 # score threshold for id shorter than 7 frames
-t_min = 5  # time threshold
+# threshold_l = 0.3  # low detection threshold
+# threshold_h = 0.5  # high detection threshold
+# threshold_s = 0.0359  # score threshold
+# threshold_s2 = 0.3 # score threshold for id shorter than 7 frames
+# t_min = 5  # time threshold
 
 
 # DPM test
